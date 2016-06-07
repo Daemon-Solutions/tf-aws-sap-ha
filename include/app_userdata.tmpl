@@ -57,7 +57,7 @@ done
 
 # == Attach "extra" volumes
 if [ "${extra_ebs}x" != "x" ]; then
-  for EBS in $(echo "$${EXTRA_EBS}" | sed 's/,/ /g'); do
+  for EBS in $(echo "${extra_ebs}" | sed 's/,/ /g'); do
     ebs_attach_format "$${EBS%:*}" "$${EBS#*:}"
   done
 fi
