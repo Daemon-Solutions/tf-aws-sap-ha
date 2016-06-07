@@ -1,0 +1,84 @@
+#!/bin/bash -x
+
+# == Function to attach/format EBS volume
+function ebs_attach_format() {
+  VOLUME=$1
+  DEVICE=$2
+
+  aws ec2 attach-volume --volume-id $VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/$DEVICE --region ${region}
+  while [ ! -e /dev/$DEVICE ]; do
+    echo "Waiting for /dev/$DEVICE to attach"
+    sleep 2s
+  done
+
+  if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
+    echo "Creating XFS filesystem on /dev/$DEVICE"
+    mkfs -t xfs /dev/$DEVICE
+  fi
+}
+
+# == Disable IPv6
+echo NETWORKING_IPV6=no >> /etc/sysconfig/network
+sed -i /::1/d /etc/hosts
+
+# == Get instance data
+INSTANCEID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id | sed -e 's/-//')
+FULL_INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+PRIVIP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+# == Hostname
+DNS_APP_NAME=$(echo "${app_name}-${svr_index}" | sed 's/_//g')
+sed -i '/HOSTNAME/d' /etc/sysconfig/network
+echo HOSTNAME=$DNS_APP_NAME >> /etc/sysconfig/network
+echo 'preserve_hostname: True' > /etc/cloud/cloud.cfg.d/10_hostname.cfg
+hostnamectl set-hostname $DNS_APP_NAME
+sed -i /$PRIVIP/d /etc/hosts
+echo $PRIVIP $DNS_APP_NAME >> /etc/hosts
+service network restart
+
+# == Swap
+SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+aws ec2 attach-volume --volume-id $SWAP_VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/xvdb --region ${region}
+while [ ! -e /dev/xvdb ]; do
+  echo "Waiting for /dev/xvdb to attach"
+  sleep 2s
+done
+mkswap /dev/xvdb
+echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
+swapon -a
+
+# == Attach tagged volumes
+for LETTER in h i j k l; do
+  DEVICE="xvd$${LETTER}"
+  VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+  ebs_attach_format "$${VOLUME}" "$${DEVICE}"
+done
+
+# == Attach "extra" volumes
+if [ "${extra_ebs}x" != "x" ]; then
+  for EBS in $(echo "$${EXTRA_EBS}" | sed 's/,/ /g'); do
+    ebs_attach_format "$${EBS%:*}" "$${EBS#*:}"
+  done
+fi
+
+# == Puppet Facts
+mkdir -p /etc/facter/facts.d
+echo 'envtype=${envtype}' >> /etc/facter/facts.d/aws.txt
+echo 'envname=${envname}' >> /etc/facter/facts.d/aws.txt
+echo 'profile=${app_name}' >> /etc/facter/facts.d/aws.txt
+echo 'sap_sid=${sap_sid}' >> /etc/facter/facts.d/aws.txt
+echo 'region=${region}' >> /etc/facter/facts.d/aws.txt
+echo 'domain=${domain}' >> /etc/facter/facts.d/aws.txt
+
+# == Puppet Repo
+echo "[sap_puppet]
+name=SAP-Puppet
+baseurl=https://${project_prefix}-${envtype}-repo.s3.amazonaws.com/repos/puppet
+metadata_expire=120s
+enabled=1
+gpgcheck=0" > /etc/yum.repos.d/s3.repo
+
+# == Install code and run Puppet
+yum install -y ${project_prefix}-puppet
+puppet-masterless-mco
