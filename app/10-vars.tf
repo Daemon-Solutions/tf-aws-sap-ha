@@ -18,8 +18,8 @@ variable "use_ebs_snapshots" { default = 0 }
 variable "new_ebs_map" {
   type    = "map"
   default = {
-    1 = 0
-    0 = 1
+    "1" = 0
+    "0" = 1
   }
 }
 
@@ -27,8 +27,8 @@ variable "new_ebs_map" {
 variable "snapshow_ebs_map" {
   type    = "map"
   default = {
-    1 = 1
-    0 = 0
+    "1" = 1
+    "0" = 0
   }
 }
 

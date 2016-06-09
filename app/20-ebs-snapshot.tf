@@ -1,4 +1,4 @@
-resource "aws_ebs_volume" "usr_sap" {
+resource "aws_ebs_volume" "snapshot_usr_sap" {
   count             = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),0)}"
   snapshot_id       = "${element(split(",",var.ebs_snapshots),0)}"
@@ -11,7 +11,7 @@ resource "aws_ebs_volume" "usr_sap" {
   }
 }
 
-resource "aws_ebs_volume" "usr_sap_sid" {
+resource "aws_ebs_volume" "snapshot_usr_sap_sid" {
   count             = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),1)}"
   snapshot_id       = "${element(split(",",var.ebs_snapshots),1)}"
@@ -24,7 +24,7 @@ resource "aws_ebs_volume" "usr_sap_sid" {
   }
 }
 
-resource "aws_ebs_volume" "usr_sap_trans" {
+resource "aws_ebs_volume" "snapshot_usr_sap_trans" {
   count             = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),2)}"
   snapshot_id       = "${element(split(",",var.ebs_snapshots),2)}"
@@ -37,7 +37,7 @@ resource "aws_ebs_volume" "usr_sap_trans" {
   }
 }
 
-resource "aws_ebs_volume" "sapmnt" {
+resource "aws_ebs_volume" "shapshot_sapmnt" {
   count             = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),3)}"
   snapshot_id       = "${element(split(",",var.ebs_snapshots),3)}"
@@ -50,7 +50,7 @@ resource "aws_ebs_volume" "sapmnt" {
   }
 }
 
-resource "aws_ebs_volume" "media" {
+resource "aws_ebs_volume" "snapshot_media" {
   count             = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),4)}"
   snapshot_id       = "${element(split(",",var.ebs_snapshots),4)}"

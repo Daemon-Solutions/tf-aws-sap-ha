@@ -1,6 +1,6 @@
-resource "aws_ebs_volume" "usr_sap" {
+resource "aws_ebs_volume" "new_usr_sap" {
   count             = "${lookup(var.new_ebs_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
-  size              = "${element(split(",",var.ebs_volume_size_list),0)}"
+  size              = "${element(split(",",var.ebs_volume_sizes),0)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
@@ -10,9 +10,9 @@ resource "aws_ebs_volume" "usr_sap" {
   }
 }
 
-resource "aws_ebs_volume" "usr_sap_sid" {
+resource "aws_ebs_volume" "new_usr_sap_sid" {
   count             = "${lookup(var.new_ebs_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
-  size              = "${element(split(",",var.ebs_volume_size_list),1)}"
+  size              = "${element(split(",",var.ebs_volume_sizes),1)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
@@ -22,9 +22,9 @@ resource "aws_ebs_volume" "usr_sap_sid" {
   }
 }
 
-resource "aws_ebs_volume" "usr_sap_trans" {
+resource "aws_ebs_volume" "new_usr_sap_trans" {
   count             = "${lookup(var.new_ebs_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
-  size              = "${element(split(",",var.ebs_volume_size_list),2)}"
+  size              = "${element(split(",",var.ebs_volume_sizes),2)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
@@ -34,9 +34,9 @@ resource "aws_ebs_volume" "usr_sap_trans" {
   }
 }
 
-resource "aws_ebs_volume" "sapmnt" {
+resource "aws_ebs_volume" "new_sapmnt" {
   count             = "${lookup(var.new_ebs_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
-  size              = "${element(split(",",var.ebs_volume_size_list),3)}"
+  size              = "${element(split(",",var.ebs_volume_sizes),3)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
@@ -46,9 +46,9 @@ resource "aws_ebs_volume" "sapmnt" {
   }
 }
 
-resource "aws_ebs_volume" "media" {
+resource "aws_ebs_volume" "new_media" {
   count             = "${lookup(var.new_ebs_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
-  size              = "${element(split(",",var.ebs_volume_size_list),4)}"
+  size              = "${element(split(",",var.ebs_volume_sizes),4)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
