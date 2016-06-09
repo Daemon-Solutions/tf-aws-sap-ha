@@ -12,18 +12,28 @@ variable "r53_zone"           {}
 # == Conditionals
 variable "create_public_dns" { default = 0 }
 variable "create_ha"         { default = 0 }
+variable "use_ebs_snapshots" { default = 0 }
 
-# == Volume Sizes
-variable "ebs_usr_sap"       {}
-variable "ebs_usr_sap_sid"   {}
-variable "ebs_usr_sap_trans" {}
-variable "ebs_sapmnt"        {}
-variable "ebs_media"         {}
-variable "root_volume_size"  { default = "15" }
+# == Maps
+variable "new_ebs_map" {
+  type    = "map"
+  default = {
+    1 = 0
+    0 = 1
+  }
+}
 
-# == Swap Sizes
+# == Maps
+variable "snapshow_ebs_map" {
+  type    = "map"
+  default = {
+    1 = 1
+    0 = 0
+  }
+}
+
 variable "swap_sizes" {
-  type = "map"
+  type    = "map"
   default = {
     t2.medium  = "8"
     m4.large   = "16"
@@ -33,10 +43,12 @@ variable "swap_sizes" {
 }
 
 # == EBS Options
-variable "encrypt_ebs_volumes" { default = false }
-variable "ebs_optimised"       { default = true  }
-variable "ebs_volume_type"     { default = "gp2" }
-variable "extra_ebs"           { default = ""    }
+variable "ebs_volume_sizes"     {}
+variable "ebs_snapshots"        { default = ""    }
+variable "extra_ebs"            { default = ""    }
+variable "encrypt_ebs_volumes"  { default = false }
+variable "ebs_optimised"        { default = true  }
+variable "ebs_volume_type"      { default = "gp2" }
 
 # == EC2 instance
 variable "key_name"                    {}
@@ -45,6 +57,7 @@ variable "iam_instance_profile"        {}
 variable "security_groups"             {}
 variable "ami_id"                      {}
 variable "instance_type"               {}
+variable "root_volume_size"            { default = "15" }
 variable "termination_protection"      { default = false }
 variable "associate_public_ip_address" { default = false }
 variable "user_data_file_path"         { default = "../localmodules//tf-aws-sap-ha/include/app_userdata.tmpl" }

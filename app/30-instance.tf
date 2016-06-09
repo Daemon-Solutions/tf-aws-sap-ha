@@ -22,3 +22,15 @@ resource "aws_instance" "app" {
     Service     = "${element(split(",",var.app_names),0)}"
   }
 }
+
+resource "aws_ebs_volume" "swap" {
+  count             = "${var.create_ha + 1}"
+  size = "${lookup(var.swap_sizes,var.instance_type)}"
+  availability_zone = "${element(split(",",var.availability_zones),count.index)}"
+  encrypted         = "${var.encrypt_ebs_volumes}"
+  type              = "gp2"
+  tags {
+    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-swap"
+    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:swap"
+  }
+}
