@@ -51,7 +51,7 @@ swapon -a
 # == Attach tagged volumes
 for LETTER in h i j k l; do
   DEVICE="xvd$${LETTER}"
-  VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+  VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
   ebs_attach_format "$${VOLUME}" "$${DEVICE}"
 done
 
