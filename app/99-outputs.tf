@@ -1,3 +1,3 @@
-output "instance_id" {
-  value = "${aws_instance.app.id}"
+output "instance_ids" {
+  value = "${join(",",aws_instance.app.*.id)}"
 }
