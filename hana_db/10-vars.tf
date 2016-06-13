@@ -47,4 +47,4 @@ variable "ami_id"                      {}
 variable "instance_type"               {}
 variable "termination_protection"      { default = false }
 variable "associate_public_ip_address" { default = false }
-variable "user_data_file_path"         { default = "../localmodules//tf-aws-sap/include/hana_userdata.tmpl" }
+variable "user_data_file_path"         { default = "../localmodules//tf-aws-sap-ha/include/hana_userdata.tmpl" }
