@@ -7,12 +7,13 @@ resource "template_file" "user_data" {
   }
 
   vars {
-    app_name  = "${var.app_name}"
-    envname   = "${var.envname}"
-    envtype   = "${var.envtype}"
-    region    = "${var.aws_region}"
-    domain    = "${var.domain}"
-    sap_sid   = "${var.sap_sid}"
-    svr_index = "${format("%02d",count.index+1)}"
+    app_name       = "${var.app_name}"
+    envname        = "${var.envname}"
+    envtype        = "${var.envtype}"
+    region         = "${var.aws_region}"
+    domain         = "${var.domain}"
+    sap_sid        = "${var.sap_sid}"
+    project_prefix = "${var.project_prefix}"
+    svr_index      = "${format("%02d",count.index+1)}"
   }
 }
