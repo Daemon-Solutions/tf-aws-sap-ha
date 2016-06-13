@@ -1,13 +1,16 @@
 # == Naming + Placement
-variable "envtype"           {}
-variable "envname"           {}
-variable "app_name"          {}
-variable "domain"            {}
-variable "aws_region"        {}
-variable "project_prefix"    {}
-variable "sap_sid"           {}
-variable "availability_zone" {}
-variable "r53_zone"          {}
+variable "envtype"            {}
+variable "envname"            {}
+variable "app_name"           {}
+variable "domain"             {}
+variable "aws_region"         {}
+variable "project_prefix"     {}
+variable "sap_sid"            {}
+variable "availability_zones" {}
+variable "r53_zone"           {}
+
+# == Conditionals
+variable "create_ha" { default = 0 }
 
 # == Volume Sizes
 variable "ebs_usr_sap"      { default = "50"  }
@@ -37,7 +40,7 @@ variable "swap_sizes" {
 
 # == EC2 instance
 variable "key_name"                    {}
-variable "instance_subnet"             {}
+variable "instance_subnets"            {}
 variable "iam_instance_profile"        {}
 variable "security_groups"             {}
 variable "ami_id"                      {}

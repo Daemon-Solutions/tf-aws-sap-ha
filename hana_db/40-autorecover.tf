@@ -1,5 +1,6 @@
 resource "aws_cloudwatch_metric_alarm" "autorecover" {
-  alarm_name          = "ec2-autorecover-${var.app_name}"
+  count               = "${var.create_ha + 1}"
+  alarm_name          = "ec2-autorecover-${var.app_name}-${format("%02d",count.index+1)}"
   namespace           = "AWS/EC2"
   evaluation_periods  = "2"
   period              = "60"
@@ -10,6 +11,6 @@ resource "aws_cloudwatch_metric_alarm" "autorecover" {
   threshold           = "0"
   metric_name         = "StatusCheckFailed_System"
   dimensions {
-      InstanceId = "${aws_instance.app.id}"
+    InstanceId = "${element(aws_instance.app.*.id,count.index)}"
   }
 }
