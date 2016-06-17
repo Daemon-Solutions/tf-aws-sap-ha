@@ -15,6 +15,7 @@ variable "create_ha" { default = 0 }
 # == Volume Sizes
 variable "ebs_usr_sap"      { default = "50"  }
 variable "ebs_media"        { default = "50"  }
+variable "ebs_db_backups"   { default = "700" }
 variable "root_volume_size" { default = "150" }
 variable "ebs_stripe_size"  {
   type = "map"

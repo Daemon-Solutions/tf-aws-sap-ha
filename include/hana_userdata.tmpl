@@ -51,7 +51,7 @@ for LETTER in d e f g h i; do
 done
 
 # == Optionally format non-striped volumes
-for LETTER in h i; do
+for LETTER in c h i; do
   DEVICE="xvd$${LETTER}"
   if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
     echo "Creating XFS filesystem on /dev/$DEVICE"
