@@ -44,7 +44,7 @@ echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
 swapon -a
 
 # == Attach tagged volumes
-for LETTER in d e f g h i; do
+for LETTER in c d e f g h i; do
   DEVICE="xvd$${LETTER}"
   VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
   ebs_attach "$${VOLUME}" "$${DEVICE}"
