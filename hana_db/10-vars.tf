@@ -15,7 +15,10 @@ variable "create_ha" { default = 0 }
 # == Volume Sizes
 variable "ebs_usr_sap"      { default = "50"  }
 variable "ebs_media"        { default = "50"  }
+variable "ebs_db_backups"   { default = "700" }
 variable "root_volume_size" { default = "150" }
+
+# == EBS volumes for LVM striping, from SAP documentation
 variable "ebs_stripe_size"  {
   type = "map"
   default = {
@@ -27,7 +30,7 @@ variable "ebs_stripe_size"  {
 variable "encrypt_ebs_volumes" { default = false }
 variable "ebs_optimised"       { default = true }
 
-# == Swap Sizes
+# == Swap Sizes, from SAP documentation
 variable "swap_sizes" {
   type = "map"
   default = {

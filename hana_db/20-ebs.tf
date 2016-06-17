@@ -1,3 +1,15 @@
+resource "aws_ebs_volume" "db_backups" {
+  count             = "${var.create_ha + 1}"
+  size              = "${var.ebs_db_backups}"
+  availability_zone = "${element(split(",",var.availability_zones),count.index)}"
+  encrypted         = "${var.encrypt_ebs_volumes}"
+  type              = "standard"
+  tags {
+    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-db-backups"
+    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdc"
+  }
+}
+
 resource "aws_ebs_volume" "stripe1" {
   count             = "${var.create_ha + 1}"
   size              = "${lookup(var.ebs_stripe_size,var.instance_type)}"
