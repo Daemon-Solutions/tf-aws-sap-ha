@@ -46,14 +46,14 @@ if [ ${create_new_ebs} -eq 1 ]; then
   swapon -a
 
   # == Attach tagged volumes
-  for LETTER in c d e f g h i; do
+  for LETTER in d e f g h i; do
     DEVICE="xvd$${LETTER}"
     VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
     ebs_attach "$${VOLUME}" "$${DEVICE}"
   done
 
   # == Optionally format non-striped volumes
-  for LETTER in c h i; do
+  for LETTER in h i; do
     DEVICE="xvd$${LETTER}"
     if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
       echo "Creating XFS filesystem on /dev/$DEVICE"
@@ -61,6 +61,13 @@ if [ ${create_new_ebs} -eq 1 ]; then
     fi
   done
 
+fi
+
+BACKUPS_VOL=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:xvdc" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+ebs_attach "$${BACKUPS_VOL}" "xvdc"
+if [ $(blkid | grep xvdc | grep -c xfs) -eq 0 ]; then
+  echo "Creating XFS filesystem on /dev/xvdc"
+  mkfs -t xfs /dev/xvdc
 fi
 
 # == Puppet Facts

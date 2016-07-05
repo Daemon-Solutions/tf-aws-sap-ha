@@ -1,5 +1,5 @@
 resource "aws_ebs_volume" "db_backups" {
-  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_ha + 1)}"
   size              = "${var.ebs_db_backups}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
