@@ -37,29 +37,32 @@ sed -i /$PRIVIP/d /etc/hosts
 echo $PRIVIP $DNS_APP_NAME >> /etc/hosts
 service network restart
 
-# == Swap
-SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
-aws ec2 attach-volume --volume-id $SWAP_VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/xvdb --region ${region}
-while [ ! -e /dev/xvdb ]; do
-  echo "Waiting for /dev/xvdb to attach"
-  sleep 2s
-done
-mkswap /dev/xvdb
-echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
-swapon -a
+if [ ${use_new_ebs} -eq 1 ]; then
 
-# == Attach tagged volumes
-for LETTER in h i j k l; do
-  DEVICE="xvd$${LETTER}"
-  VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
-  ebs_attach_format "$${VOLUME}" "$${DEVICE}"
-done
-
-# == Attach "extra" volumes
-if [ "${extra_ebs}x" != "x" ]; then
-  for EBS in $(echo "${extra_ebs}" | sed 's/,/ /g'); do
-    ebs_attach_format "$${EBS%:*}" "$${EBS#*:}"
+  # == Swap
+  SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+  aws ec2 attach-volume --volume-id $SWAP_VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/xvdb --region ${region}
+  while [ ! -e /dev/xvdb ]; do
+    echo "Waiting for /dev/xvdb to attach"
+    sleep 2s
   done
+  mkswap /dev/xvdb
+  echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
+  swapon -a
+
+  # == Attach tagged volumes
+  for LETTER in h i j k l; do
+    DEVICE="xvd$${LETTER}"
+    VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+    ebs_attach_format "$${VOLUME}" "$${DEVICE}"
+  done
+
+  # == Attach "extra" volumes
+  if [ "${extra_ebs}x" != "x" ]; then
+    for EBS in $(echo "${extra_ebs}" | sed 's/,/ /g'); do
+      ebs_attach_format "$${EBS%:*}" "$${EBS#*:}"
+    done
+  fi
 fi
 
 # == Puppet Facts

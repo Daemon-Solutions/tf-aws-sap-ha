@@ -12,26 +12,9 @@ variable "r53_zone"           {}
 # == Conditionals
 variable "create_public_dns" { default = 0 }
 variable "create_ha"         { default = 0 }
-variable "use_ebs_snapshots" { default = 0 }
+variable "use_new_ebs"       { default = 1 }
 
 # == Maps
-variable "new_ebs_map" {
-  type    = "map"
-  default = {
-    "1" = 0
-    "0" = 1
-  }
-}
-
-# == Maps
-variable "snapshow_ebs_map" {
-  type    = "map"
-  default = {
-    "1" = 1
-    "0" = 0
-  }
-}
-
 variable "swap_sizes" {
   type    = "map"
   default = {
@@ -43,7 +26,7 @@ variable "swap_sizes" {
 }
 
 # == EBS Options
-variable "ebs_volume_sizes"     {}
+variable "ebs_volume_sizes"     { default = ""    }
 variable "ebs_snapshots"        { default = ""    }
 variable "extra_ebs"            { default = ""    }
 variable "encrypt_ebs_volumes"  { default = false }

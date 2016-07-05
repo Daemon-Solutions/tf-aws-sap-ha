@@ -16,5 +16,6 @@ resource "template_file" "user_data" {
     extra_ebs      = "${element(split(";",var.extra_ebs),count.index)}"
     project_prefix = "${var.project_prefix}"
     svr_index      = "${format("%02d",count.index+1)}"
+    use_new_ebs    = "${var.use_new_ebs}"
   }
 }
