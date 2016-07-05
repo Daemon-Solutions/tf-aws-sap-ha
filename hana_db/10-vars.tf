@@ -10,7 +10,9 @@ variable "availability_zones" {}
 variable "r53_zone"           {}
 
 # == Conditionals
-variable "create_ha" { default = 0 }
+variable "create_ha"      { default = 0 }
+variable "create_new_ebs" { default = 1 }
+variable "create_r53"     { default = 1 }
 
 # == Volume Sizes
 variable "ebs_usr_sap"      { default = "50"  }

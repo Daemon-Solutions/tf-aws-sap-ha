@@ -1,5 +1,5 @@
 resource "aws_ebs_volume" "db_backups" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${var.ebs_db_backups}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -11,7 +11,7 @@ resource "aws_ebs_volume" "db_backups" {
 }
 
 resource "aws_ebs_volume" "stripe1" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${lookup(var.ebs_stripe_size,var.instance_type)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -23,7 +23,7 @@ resource "aws_ebs_volume" "stripe1" {
 }
 
 resource "aws_ebs_volume" "stripe2" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${lookup(var.ebs_stripe_size,var.instance_type)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -35,7 +35,7 @@ resource "aws_ebs_volume" "stripe2" {
 }
 
 resource "aws_ebs_volume" "stripe3" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${lookup(var.ebs_stripe_size,var.instance_type)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -47,7 +47,7 @@ resource "aws_ebs_volume" "stripe3" {
 }
 
 resource "aws_ebs_volume" "stripe4" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${lookup(var.ebs_stripe_size,var.instance_type)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -59,7 +59,7 @@ resource "aws_ebs_volume" "stripe4" {
 }
 
 resource "aws_ebs_volume" "usr_sap" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${var.ebs_usr_sap}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -71,7 +71,7 @@ resource "aws_ebs_volume" "usr_sap" {
 }
 
 resource "aws_ebs_volume" "media" {
-  count             = "${var.create_ha + 1}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${var.ebs_media}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -79,5 +79,17 @@ resource "aws_ebs_volume" "media" {
   tags {
     Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-media"
     For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdi"
+  }
+}
+
+resource "aws_ebs_volume" "swap" {
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
+  size              = "${lookup(var.swap_sizes,var.instance_type)}"
+  availability_zone = "${element(split(",",var.availability_zones),count.index)}"
+  encrypted         = "${var.encrypt_ebs_volumes}"
+  type              = "gp2"
+  tags {
+    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-swap"
+    For  = "${var.app_name}-${format("%02d",count.index+1)}:swap"
   }
 }

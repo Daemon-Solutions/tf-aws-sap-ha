@@ -10,9 +10,10 @@ variable "availability_zones" {}
 variable "r53_zone"           {}
 
 # == Conditionals
+variable "create_r53"        { default = 1 }
 variable "create_public_dns" { default = 0 }
 variable "create_ha"         { default = 0 }
-variable "use_new_ebs"       { default = 1 }
+variable "create_new_ebs"    { default = 1 }
 
 # == Maps
 variable "swap_sizes" {
@@ -27,7 +28,6 @@ variable "swap_sizes" {
 
 # == EBS Options
 variable "ebs_volume_sizes"     { default = ""    }
-variable "ebs_snapshots"        { default = ""    }
 variable "extra_ebs"            { default = ""    }
 variable "encrypt_ebs_volumes"  { default = false }
 variable "ebs_optimised"        { default = true  }

@@ -1,5 +1,5 @@
 resource "aws_ebs_volume" "new_usr_sap" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),0)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -11,7 +11,7 @@ resource "aws_ebs_volume" "new_usr_sap" {
 }
 
 resource "aws_ebs_volume" "new_usr_sap_sid" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),1)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -23,7 +23,7 @@ resource "aws_ebs_volume" "new_usr_sap_sid" {
 }
 
 resource "aws_ebs_volume" "new_usr_sap_trans" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),2)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -35,7 +35,7 @@ resource "aws_ebs_volume" "new_usr_sap_trans" {
 }
 
 resource "aws_ebs_volume" "new_sapmnt" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),3)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -47,7 +47,7 @@ resource "aws_ebs_volume" "new_sapmnt" {
 }
 
 resource "aws_ebs_volume" "new_media" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${element(split(",",var.ebs_volume_sizes),4)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
@@ -59,7 +59,7 @@ resource "aws_ebs_volume" "new_media" {
 }
 
 resource "aws_ebs_volume" "swap" {
-  count             = "${var.use_new_ebs * (var.create_ha + 1)}"
+  count             = "${var.create_new_ebs * (var.create_ha + 1)}"
   size              = "${lookup(var.swap_sizes,var.instance_type)}"
   availability_zone = "${element(split(",",var.availability_zones),count.index)}"
   encrypted         = "${var.encrypt_ebs_volumes}"
