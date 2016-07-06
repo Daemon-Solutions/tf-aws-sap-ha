@@ -13,7 +13,7 @@ resource "template_file" "user_data" {
     region         = "${var.aws_region}"
     domain         = "${var.domain}"
     sap_sid        = "${var.sap_sid}"
-    extra_ebs      = "${element(split(";",var.extra_ebs),count.index)}"
+    extra_ebs      = "${var.extra_ebs}"
     project_prefix = "${var.project_prefix}"
     svr_index      = "${format("%02d",count.index+1)}"
     create_new_ebs = "${var.create_new_ebs}"

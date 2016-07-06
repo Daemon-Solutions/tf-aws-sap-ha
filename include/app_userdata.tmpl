@@ -60,8 +60,9 @@ fi
 
 # == Attach "extra" volumes
 if [ "${extra_ebs}x" != "x" ]; then
-  for EBS in $(echo "${extra_ebs}" | sed 's/,/ /g'); do
-    ebs_attach_format "$${EBS%:*}" "$${EBS#*:}"
+  for DEVICE in $(echo "${extra_ebs}" | sed 's/,/ /g'); do
+    VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+    ebs_attach_format "$${VOLUME}" "$${DEVICE}"
   done
 fi
 
