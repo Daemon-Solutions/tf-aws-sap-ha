@@ -1,6 +1,6 @@
 resource "aws_cloudwatch_metric_alarm" "autorecover" {
   count               = "${var.create_ha + 1}"
-  alarm_name          = "ec2-autorecover-${var.app_name}-${format("%02d",count.index+1)}"
+  alarm_name          = "ec2-autorecover-${var.app_name}-${var.envname}-${format("%02d",count.index+1)}"
   namespace           = "AWS/EC2"
   evaluation_periods  = "2"
   period              = "60"
