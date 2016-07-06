@@ -5,8 +5,9 @@ resource "aws_ebs_volume" "new_usr_sap" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdh"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdh"
+    Environment = "${var.envname}"
   }
 }
 
@@ -17,8 +18,9 @@ resource "aws_ebs_volume" "new_usr_sap_sid" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap_sid"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdi"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap_sid"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdi"
+    Environment = "${var.envname}"
   }
 }
 
@@ -29,8 +31,9 @@ resource "aws_ebs_volume" "new_usr_sap_trans" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap_trans"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdj"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-usr_sap_trans"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdj"
+    Environment = "${var.envname}"
   }
 }
 
@@ -41,8 +44,9 @@ resource "aws_ebs_volume" "new_sapmnt" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-sapmnt"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdk"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-sapmnt"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdk"
+    Environment = "${var.envname}"
   }
 }
 
@@ -53,8 +57,9 @@ resource "aws_ebs_volume" "new_media" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "${var.ebs_volume_type}"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-media"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdl"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-media"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:xvdl"
+    Environment = "${var.envname}"
   }
 }
 
@@ -65,7 +70,8 @@ resource "aws_ebs_volume" "swap" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-swap"
-    For  = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:swap"
+    Name        = "${var.project_prefix}-${var.envname}-${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}-swap"
+    For         = "${element(split(",",var.app_names),0)}-${format("%02d",count.index+1)}:swap"
+    Environment = "${var.envname}"
   }
 }

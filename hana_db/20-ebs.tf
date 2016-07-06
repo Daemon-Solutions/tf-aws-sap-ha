@@ -5,8 +5,9 @@ resource "aws_ebs_volume" "db_backups" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "standard"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-db-backups"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdc"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-db-backups"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdc"
+    Environment = "${var.envname}"
   }
 }
 
@@ -17,8 +18,9 @@ resource "aws_ebs_volume" "stripe1" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe1"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdd"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe1"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdd"
+    Environment = "${var.envname}"
   }
 }
 
@@ -29,8 +31,9 @@ resource "aws_ebs_volume" "stripe2" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe2"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvde"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe2"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvde"
+    Environment = "${var.envname}"
   }
 }
 
@@ -41,8 +44,9 @@ resource "aws_ebs_volume" "stripe3" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe3"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdf"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe3"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdf"
+    Environment = "${var.envname}"
   }
 }
 
@@ -53,8 +57,9 @@ resource "aws_ebs_volume" "stripe4" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe4"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdg"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-stripe4"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdg"
+    Environment = "${var.envname}"
   }
 }
 
@@ -65,8 +70,9 @@ resource "aws_ebs_volume" "usr_sap" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-usr-sap"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdh"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-usr-sap"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdh"
+    Environment = "${var.envname}"
   }
 }
 
@@ -77,8 +83,9 @@ resource "aws_ebs_volume" "media" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-media"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:xvdi"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-media"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:xvdi"
+    Environment = "${var.envname}"
   }
 }
 
@@ -89,7 +96,8 @@ resource "aws_ebs_volume" "swap" {
   encrypted         = "${var.encrypt_ebs_volumes}"
   type              = "gp2"
   tags {
-    Name = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-swap"
-    For  = "${var.app_name}-${format("%02d",count.index+1)}:swap"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}-swap"
+    For         = "${var.app_name}-${format("%02d",count.index+1)}:swap"
+    Environment = "${var.envname}"
   }
 }
