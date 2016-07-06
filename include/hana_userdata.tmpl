@@ -35,7 +35,7 @@ service network restart
 if [ ${create_new_ebs} -eq 1 ]; then
 
   # == Swap
-  SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=Environment,Values=${envname}" "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+  SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:Environment,Values=${envname}" "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
   aws ec2 attach-volume --volume-id $SWAP_VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/xvdb --region ${region}
   while [ ! -e /dev/xvdb ]; do
     echo "Waiting for /dev/xvdb to attach"
@@ -48,7 +48,7 @@ if [ ${create_new_ebs} -eq 1 ]; then
   # == Attach tagged volumes
   for LETTER in d e f g h i; do
     DEVICE="xvd$${LETTER}"
-    VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+    VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=tag:Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
     ebs_attach "$${VOLUME}" "$${DEVICE}"
   done
 
@@ -63,7 +63,7 @@ if [ ${create_new_ebs} -eq 1 ]; then
 
 fi
 
-BACKUPS_VOL=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:xvdc" "Name=Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+BACKUPS_VOL=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:xvdc" "Name=tag:Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
 ebs_attach "$${BACKUPS_VOL}" "xvdc"
 if [ $(blkid | grep xvdc | grep -c xfs) -eq 0 ]; then
   echo "Creating XFS filesystem on /dev/xvdc"
