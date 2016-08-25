@@ -18,7 +18,7 @@ variable "create_r53"     { default = 1 }
 # == Volume Sizes
 variable "root_volume_size" { default = "20" }
 variable "ebs_swap_size"    { default = "4" }
-variable "ebs_usr_sap"      { default = "50"  }
+variable "ebs_usr_sap_size" { default = "50"  }
 variable "ebs_stripe_size"  { }
 
 # == Generic EBS Options

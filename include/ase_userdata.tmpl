@@ -11,7 +11,7 @@ PRIVIP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
 # == Hostname
-DNS_APP_NAME=$(echo "${app_name}-${svr_index}" | sed 's/_//g')
+DNS_APP_NAME=$(echo "${app_stack}${app_name}-${svr_index}" | sed 's/_//g')
 sed -i '/HOSTNAME/d' /etc/sysconfig/network
 echo HOSTNAME=$DNS_APP_NAME >> /etc/sysconfig/network
 echo 'preserve_hostname: True' > /etc/cloud/cloud.cfg.d/10_hostname.cfg
@@ -25,11 +25,14 @@ mkswap /dev/xvdb
 echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
 swapon -a
 
-# == /usr/sap
-if [ $(blkid | grep xvdh | grep -c xfs) -eq 0 ]; then
-  echo "Creating XFS filesystem on /dev/xvdh"
-  mkfs -t xfs /dev/xvdh
-fi
+# == Format volumes
+for LETTER in m n o p q r; do
+  DEVICE="xvd$${LETTER}"
+  if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
+    echo "Creating XFS filesystem on /dev/$DEVICE"
+    mkfs -t xfs /dev/$DEVICE
+  fi
+done
 
 # == Puppet Facts
 mkdir -p /etc/facter/facts.d

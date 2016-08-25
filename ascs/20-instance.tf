@@ -39,8 +39,10 @@ resource "aws_instance" "instance" {
   }
 
   tags {
-    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_stack}_${var.app_name}-${format("%02d",count.index+1)}"
     Environment = "${var.envname}"
-    Service     = "${var.app_name}"
+    Stack       = "${var.app_stack}"
+    Component   = "${var.app_name}"
+    Service     = "${var.app_stack}_${var.app_name}"
   }
 }
