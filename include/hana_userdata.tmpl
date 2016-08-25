@@ -50,4 +50,4 @@ gpgcheck=0" > /etc/yum.repos.d/s3.repo
 
 # == Install code and run Puppet
 yum install -y ${project_prefix}-puppet
-puppet-masterless-mco
+/opt/puppetlabs/puppet/bin/puppet apply --verbose --show_diff /etc/puppetlabs/code/manifests/site.pp
