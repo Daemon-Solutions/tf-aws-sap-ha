@@ -52,6 +52,13 @@ resource "aws_instance" "app" {
     volume_type = "gp2"
   }
 
+  # /usr/sap
+  ebs_block_device {
+    volume_size = "${var.ebs_usr_sap}"
+    device_name = "xvdh"
+    volume_type = "gp2"
+  }
+
   tags {
     Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}"
     Environment = "${var.envname}"
