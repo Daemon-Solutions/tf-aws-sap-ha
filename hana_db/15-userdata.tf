@@ -14,7 +14,6 @@ resource "template_file" "user_data" {
     domain         = "${var.domain}"
     sap_sid        = "${var.sap_sid}"
     project_prefix = "${var.project_prefix}"
-    create_new_ebs = "${var.create_new_ebs}"
     svr_index      = "${format("%02d",count.index+1)}"
   }
 }

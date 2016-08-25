@@ -15,33 +15,14 @@ variable "create_new_ebs" { default = 1 }
 variable "create_r53"     { default = 1 }
 
 # == Volume Sizes
+variable "root_volume_size" { default = "20" }
+variable "ebs_swap_size"    { default = "4" }
 variable "ebs_usr_sap"      { default = "50"  }
-variable "ebs_media"        { default = "50"  }
-variable "ebs_db_backups"   { default = "700" }
-variable "root_volume_size" { default = "150" }
+variable "ebs_stripe_size"  { }
 
-# == EBS volumes for LVM striping, from SAP documentation
-variable "ebs_stripe_size"  {
-  type = "map"
-  default = {
-    r3.4xlarge = "334"
-  }
-}
-
-# == EBS Options
+# == Generic EBS Options
 variable "encrypt_ebs_volumes" { default = false }
 variable "ebs_optimised"       { default = true }
-
-# == Swap Sizes, from SAP documentation
-variable "swap_sizes" {
-  type = "map"
-  default = {
-    m4.large   = "16"
-    m4.xlarge  = "32"
-    m4.2xlarge = "64"
-    r3.4xlarge = "96"
-  }
-}
 
 # == EC2 instance
 variable "key_name"                    {}
