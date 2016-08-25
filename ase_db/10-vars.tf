@@ -17,9 +17,10 @@ variable "create_r53"     { default = 1 }
 
 # == Volume Sizes
 variable "root_volume_size" { default = "20" }
-variable "ebs_swap_size"    { default = "4" }
-variable "ebs_usr_sap"      { default = "50"  }
-variable "ebs_stripe_size"  { }
+variable "ebs_swap_size"    { default = "4"  }
+variable "ebs_sapdata_size" { default = "50" }
+variable "ebs_sybase_size"  { default = "30" }
+variable "ebs_saplog_size"  { default = "40" }
 
 # == Generic EBS Options
 variable "encrypt_ebs_volumes" { default = false }
@@ -34,4 +35,4 @@ variable "ami_id"                      {}
 variable "instance_type"               {}
 variable "termination_protection"      { default = false }
 variable "associate_public_ip_address" { default = false }
-variable "user_data_file_path"         { default = "../localmodules//tf-aws-sap-ha/include/hana_userdata.tmpl" }
+variable "user_data_file_path"         { default = "../localmodules//tf-aws-sap-ha/include/ase_userdata.tmpl" }

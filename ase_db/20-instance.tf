@@ -24,38 +24,45 @@ resource "aws_instance" "instance" {
     volume_type = "gp2"
   }
 
-  # Stripe1
+  # sybase
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdd"
+    volume_size = "${var.ebs_sybase_size}"
+    device_name = "xvdm"
     volume_type = "gp2"
   }
 
-  # Stripe2
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvde"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdn"
     volume_type = "gp2"
   }
 
-  # Stripe3
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdf"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdo"
     volume_type = "gp2"
   }
 
-  # Stripe4
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdg"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdp"
     volume_type = "gp2"
   }
 
-  # /usr/sap
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_usr_sap}"
-    device_name = "xvdh"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdq"
+    volume_type = "gp2"
+  }
+
+  # saplog_1
+  ebs_block_device {
+    volume_size = "${var.ebs_saplog_size}"
+    device_name = "xvdr"
     volume_type = "gp2"
   }
 

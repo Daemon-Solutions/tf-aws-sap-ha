@@ -24,43 +24,22 @@ resource "aws_instance" "instance" {
     volume_type = "gp2"
   }
 
-  # Stripe1
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdd"
-    volume_type = "gp2"
-  }
-
-  # Stripe2
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvde"
-    volume_type = "gp2"
-  }
-
-  # Stripe3
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdf"
-    volume_type = "gp2"
-  }
-
-  # Stripe4
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdg"
-    volume_type = "gp2"
-  }
-
   # /usr/sap
   ebs_block_device {
-    volume_size = "${var.ebs_usr_sap}"
+    volume_size = "${var.ebs_usr_sap_size}"
     device_name = "xvdh"
     volume_type = "gp2"
   }
 
+  # /usr/sap/[sid]
+  ebs_block_device {
+    volume_size = "${var.ebs_usr_sap_sid_size}"
+    device_name = "xvdi"
+    volume_type = "gp2"
+  }
+
   tags {
-    Name        = "${var.project_prefix}-${var.envname}-${var.app_stack}_${var.app_name}-${format("%02d",count.index+1)}"
+    Name        = "${var.project_prefix}-${var.envname}-${var.app_name}-${format("%02d",count.index+1)}"
     Environment = "${var.envname}"
     Service     = "${var.app_name}"
   }

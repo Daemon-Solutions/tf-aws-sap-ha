@@ -8,6 +8,7 @@ resource "template_file" "user_data" {
 
   vars {
     app_name       = "${var.app_name}"
+    app_stack      = "${var.app_stack}"
     envname        = "${var.envname}"
     envtype        = "${var.envtype}"
     region         = "${var.aws_region}"
