@@ -1,5 +1,17 @@
 #!/bin/bash -x
 
+# == Function to attach/format EBS volume
+function ebs_attach() {
+  VOLUME=$1
+  DEVICE=$2
+
+  aws ec2 attach-volume --volume-id $VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/$DEVICE --region ${region}
+  while [ ! -e /dev/$DEVICE ]; do
+    echo "Waiting for /dev/$DEVICE to attach"
+    sleep 2s
+  done
+}
+
 # == Disable IPv6
 echo NETWORKING_IPV6=no >> /etc/sysconfig/network
 sed -i /::1/d /etc/hosts
@@ -11,24 +23,51 @@ PRIVIP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
 
 # == Hostname
-DNS_APP_NAME=$(echo "${app_stack}${app_name}-${svr_index}" | sed 's/_//g')
+DNS_APP_NAME=$(echo "${app_name}-${svr_index}" | sed 's/_//g')
 sed -i '/HOSTNAME/d' /etc/sysconfig/network
 echo HOSTNAME=$DNS_APP_NAME >> /etc/sysconfig/network
 echo 'preserve_hostname: True' > /etc/cloud/cloud.cfg.d/10_hostname.cfg
-hostname $DNS_APP_NAME
+hostnamectl set-hostname $DNS_APP_NAME
 sed -i /$PRIVIP/d /etc/hosts
 echo $PRIVIP $DNS_APP_NAME >> /etc/hosts
 service network restart
 
-# == Swap
-mkswap /dev/xvdb
-echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
-swapon -a
+if [ ${create_new_ebs} -eq 1 ]; then
 
-# == /usr/sap
-if [ $(blkid | grep xvdh | grep -c xfs) -eq 0 ]; then
-  echo "Creating XFS filesystem on /dev/xvdh"
-  mkfs -t xfs /dev/xvdh
+  # == Swap
+  SWAP_VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:Environment,Values=${envname}" "Name=tag:For,Values=${app_name}-${svr_index}:swap" --region eu-west-1 --output text | grep VOLUMES | awk '{print $8}')
+  aws ec2 attach-volume --volume-id $SWAP_VOLUME --instance-id $FULL_INSTANCE_ID --device /dev/xvdb --region ${region}
+  while [ ! -e /dev/xvdb ]; do
+    echo "Waiting for /dev/xvdb to attach"
+    sleep 2s
+  done
+  mkswap /dev/xvdb
+  echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
+  swapon -a
+
+  # == Attach tagged volumes
+  for LETTER in d e f g h i; do
+    DEVICE="xvd$${LETTER}"
+    VOLUME=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:$${DEVICE}" "Name=tag:Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+    ebs_attach "$${VOLUME}" "$${DEVICE}"
+  done
+
+  # == Optionally format non-striped volumes
+  for LETTER in h i; do
+    DEVICE="xvd$${LETTER}"
+    if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
+      echo "Creating XFS filesystem on /dev/$DEVICE"
+      mkfs -t xfs /dev/$DEVICE
+    fi
+  done
+
+fi
+
+BACKUPS_VOL=$(aws ec2 describe-volumes --filters "Name=tag:For,Values=${app_name}-${svr_index}:xvdc" "Name=tag:Environment,Values=${envname}" "Name=status,Values=available" --region eu-west-1 | grep VolumeId | awk '{print $2}' | sed 's/"//g;s/,//g')
+ebs_attach "$${BACKUPS_VOL}" "xvdc"
+if [ $(blkid | grep xvdc | grep -c xfs) -eq 0 ]; then
+  echo "Creating XFS filesystem on /dev/xvdc"
+  mkfs -t xfs /dev/xvdc
 fi
 
 # == Puppet Facts
@@ -36,7 +75,6 @@ mkdir -p /etc/facter/facts.d
 echo 'envtype=${envtype}' >> /etc/facter/facts.d/aws.txt
 echo 'envname=${envname}' >> /etc/facter/facts.d/aws.txt
 echo 'profile=${app_name}' >> /etc/facter/facts.d/aws.txt
-echo 'sap_stack=${app_stack}' >> /etc/facter/facts.d/aws.txt
 echo 'sap_sid=${sap_sid}' >> /etc/facter/facts.d/aws.txt
 echo 'region=${region}' >> /etc/facter/facts.d/aws.txt
 echo "domain=${domain}" >> /etc/facter/facts.d/aws.txt
@@ -51,4 +89,4 @@ gpgcheck=0" > /etc/yum.repos.d/s3.repo
 
 # == Install code and run Puppet
 yum install -y ${project_prefix}-puppet
-/opt/puppetlabs/puppet/bin/puppet apply --verbose --show_diff /etc/puppetlabs/code/manifests/site.pp
+puppet-masterless-mco

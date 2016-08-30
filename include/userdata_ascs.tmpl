@@ -1,0 +1,57 @@
+#!/bin/bash -x
+
+# == Disable IPv6
+echo NETWORKING_IPV6=no >> /etc/sysconfig/network
+sed -i /::1/d /etc/hosts
+
+# == Get instance data
+INSTANCEID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id | sed -e 's/-//')
+FULL_INSTANCE_ID=$(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+PRIVIP=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
+AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)
+
+# == Hostname
+DNS_APP_NAME=$(echo "${app_stack}${app_name}-${svr_index}" | sed 's/_//g')
+sed -i '/HOSTNAME/d' /etc/sysconfig/network
+echo HOSTNAME=$DNS_APP_NAME >> /etc/sysconfig/network
+echo 'preserve_hostname: True' > /etc/cloud/cloud.cfg.d/10_hostname.cfg
+hostnamectl set-hostname $DNS_APP_NAME
+sed -i /$PRIVIP/d /etc/hosts
+echo $PRIVIP $DNS_APP_NAME >> /etc/hosts
+service network restart
+
+# == Swap
+mkswap /dev/xvdb
+echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
+swapon -a
+
+# == Format volumes
+for LETTER in h i; do
+  DEVICE="xvd$${LETTER}"
+  if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
+    echo "Creating XFS filesystem on /dev/$DEVICE"
+    mkfs -t xfs /dev/$DEVICE
+  fi
+done
+
+# == Puppet Facts
+mkdir -p /etc/facter/facts.d
+echo 'envtype=${envtype}' >> /etc/facter/facts.d/aws.txt
+echo 'envname=${envname}' >> /etc/facter/facts.d/aws.txt
+echo 'profile=${app_name}' >> /etc/facter/facts.d/aws.txt
+echo 'sap_stack=${app_stack}' >> /etc/facter/facts.d/aws.txt
+echo 'sap_sid=${sap_sid}' >> /etc/facter/facts.d/aws.txt
+echo 'region=${region}' >> /etc/facter/facts.d/aws.txt
+echo 'domain=${domain}' >> /etc/facter/facts.d/aws.txt
+
+# == Puppet Repo
+echo "[sap_puppet]
+name=SAP-Puppet
+baseurl=https://${project_prefix}-${envtype}-repo.s3.amazonaws.com/repos/puppet
+metadata_expire=120s
+enabled=1
+gpgcheck=0" > /etc/yum.repos.d/s3.repo
+
+# == Install code and run Puppet
+yum install -y ${project_prefix}-puppet
+/opt/puppetlabs/puppet/bin/puppet apply --verbose --show_diff /etc/puppetlabs/code/manifests/site.pp
