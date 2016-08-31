@@ -45,21 +45,21 @@ resource "aws_instance" "instance" {
     volume_type = "gp2"
   }
 
-  # sapdata_1
+  # sapdata_2
   ebs_block_device {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdp"
     volume_type = "gp2"
   }
 
-  # sapdata_1
+  # sapdata_3
   ebs_block_device {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdq"
     volume_type = "gp2"
   }
 
-  # saplog_1
+  # saplog_4
   ebs_block_device {
     volume_size = "${var.ebs_saplog_size}"
     device_name = "xvdr"
