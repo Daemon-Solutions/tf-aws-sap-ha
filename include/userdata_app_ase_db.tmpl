@@ -26,7 +26,7 @@ echo "/dev/xvdb swap swap defaults 0 0" >> /etc/fstab
 swapon -a
 
 # == Format volumes
-for LETTER in h i; do
+for LETTER in h i k m n o p q r; do
   DEVICE="xvd$${LETTER}"
   if [ $(blkid | grep $DEVICE | grep -c xfs) -eq 0 ]; then
     echo "Creating XFS filesystem on /dev/$DEVICE"
