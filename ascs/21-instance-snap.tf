@@ -1,5 +1,5 @@
-resource "aws_instance" "instance" {
-  count                       = "${lookup(var.logic_invert_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
+resource "aws_instance" "instance_snap" {
+  count                       = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   ami                         = "${var.ami_id}"
   instance_type               = "${element(split(",",var.instance_type),count.index)}"
   subnet_id                   = "${element(split(",",var.instance_subnets),count.index)}"
@@ -22,34 +22,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_swap_size}"
     device_name = "xvdb"
     volume_type = "gp2"
-  }
-
-  # Stripe1
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdd"
-    volume_type = "gp2"
-  }
-
-  # Stripe2
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvde"
-    volume_type = "gp2"
-  }
-
-  # Stripe3
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdf"
-    volume_type = "gp2"
-  }
-
-  # Stripe4
-  ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdg"
-    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),0)}"
   }
 
   # /usr/sap
@@ -57,6 +30,15 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_usr_sap_size}"
     device_name = "xvdh"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),1)}"
+  }
+
+  # /usr/sap/[sid]
+  ebs_block_device {
+    volume_size = "${var.ebs_usr_sap_sid_size}"
+    device_name = "xvdi"
+    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),2)}"
   }
 
   tags {

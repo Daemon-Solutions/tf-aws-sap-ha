@@ -1,5 +1,5 @@
 resource "aws_instance" "instance" {
-  count                       = "${var.create_ha + 1}"
+  count                       = "${lookup(var.logic_invert_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
   ami                         = "${var.ami_id}"
   instance_type               = "${element(split(",",var.instance_type),count.index)}"
   subnet_id                   = "${element(split(",",var.instance_subnets),count.index)}"

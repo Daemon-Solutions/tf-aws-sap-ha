@@ -11,22 +11,33 @@ variable "availability_zones" {}
 variable "r53_zone"           {}
 
 # == Conditionals
-variable "create_ha"      { default = 0 }
-variable "create_r53"     { default = 1 }
+variable "create_ha"         { default = 0 }
+variable "create_r53"        { default = 1 }
+variable "use_ebs_snapshots" { default = 0 }
+
+# == Maps
+variable "logic_invert_map" {
+  type    = "map"
+  default = {
+    "0" = "1"
+    "1" = "0"
+  }
+}
 
 # == Generic EBS Options
 variable "encrypt_ebs_volumes" { default = false }
 variable "ebs_optimised"       { default = true }
 
 # == Volume Sizes
-variable "root_volume_size"     { default = "20" }
-variable "ebs_swap_size"        { default = "4"  }
-variable "ebs_usr_sap_size"     { default = "50" }
-variable "ebs_usr_sap_sid_size" { default = "40" }
-variable "ebs_sapmnt_size"      { default = "50" }
-variable "ebs_sapdata_size"     { default = "50" }
-variable "ebs_sybase_size"      { default = "30" }
-variable "ebs_saplog_size"      { default = "40" }
+variable "root_volume_size"     {}
+variable "ebs_swap_size"        {}
+variable "ebs_usr_sap_size"     {}
+variable "ebs_usr_sap_sid_size" {}
+variable "ebs_sapmnt_size"      {}
+variable "ebs_sapdata_size"     {}
+variable "ebs_sybase_size"      {}
+variable "ebs_saplog_size"      {}
+variable "ebs_snapshots"        { default = "" }
 
 # == EC2 instance
 variable "key_name"                    {}

@@ -1,5 +1,5 @@
-resource "aws_instance" "instance" {
-  count                       = "${lookup(var.logic_invert_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
+resource "aws_instance" "instance_snap" {
+  count                       = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   ami                         = "${var.ami_id}"
   instance_type               = "${element(split(",",var.instance_type),count.index)}"
   subnet_id                   = "${element(split(",",var.instance_subnets),count.index)}"
@@ -22,6 +22,31 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_swap_size}"
     device_name = "xvdb"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),0)}"
+  }
+
+  # /usr/sap
+  ebs_block_device {
+    volume_size = "${var.ebs_usr_sap_size}"
+    device_name = "xvdh"
+    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),1)}"
+  }
+
+  # /usr/sap/[sid]
+  ebs_block_device {
+    volume_size = "${var.ebs_usr_sap_sid_size}"
+    device_name = "xvdi"
+    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),2)}"
+  }
+
+  # /sapmnt
+  ebs_block_device {
+    volume_size = "${var.ebs_sapmnt_size}"
+    device_name = "xvdk"
+    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),3)}"
   }
 
   # sybase
@@ -29,6 +54,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_sybase_size}"
     device_name = "xvdm"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),4)}"
   }
 
   # sapdata_1
@@ -36,6 +62,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdn"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),5)}"
   }
 
   # sapdata_1
@@ -43,6 +70,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdo"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),6)}"
   }
 
   # sapdata_2
@@ -50,6 +78,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdp"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),7)}"
   }
 
   # sapdata_3
@@ -57,6 +86,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_sapdata_size}"
     device_name = "xvdq"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),8)}"
   }
 
   # saplog_4
@@ -64,6 +94,7 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_saplog_size}"
     device_name = "xvdr"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),9)}"
   }
 
   tags {

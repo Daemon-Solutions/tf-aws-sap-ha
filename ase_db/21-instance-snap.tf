@@ -1,5 +1,5 @@
-resource "aws_instance" "instance" {
-  count                       = "${lookup(var.logic_invert_map,var.use_ebs_snapshots) * (var.create_ha + 1)}"
+resource "aws_instance" "instance_snap" {
+  count                       = "${var.use_ebs_snapshots * (var.create_ha + 1)}"
   ami                         = "${var.ami_id}"
   instance_type               = "${element(split(",",var.instance_type),count.index)}"
   subnet_id                   = "${element(split(",",var.instance_subnets),count.index)}"
@@ -22,41 +22,55 @@ resource "aws_instance" "instance" {
     volume_size = "${var.ebs_swap_size}"
     device_name = "xvdb"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),0)}"
   }
 
-  # Stripe1
+  # sybase
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdd"
+    volume_size = "${var.ebs_sybase_size}"
+    device_name = "xvdm"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),1)}"
   }
 
-  # Stripe2
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvde"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdn"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),2)}"
   }
 
-  # Stripe3
+  # sapdata_1
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdf"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdo"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),3)}"
   }
 
-  # Stripe4
+  # sapdata_2
   ebs_block_device {
-    volume_size = "${var.ebs_stripe_size}"
-    device_name = "xvdg"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdp"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),4)}"
   }
 
-  # /usr/sap
+  # sapdata_3
   ebs_block_device {
-    volume_size = "${var.ebs_usr_sap_size}"
-    device_name = "xvdh"
+    volume_size = "${var.ebs_sapdata_size}"
+    device_name = "xvdq"
     volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),5)}"
+  }
+
+  # saplog_4
+  ebs_block_device {
+    volume_size = "${var.ebs_saplog_size}"
+    device_name = "xvdr"
+    volume_type = "gp2"
+    snapshot_id = "${element(split(",",var.ebs_snapshots),6)}"
   }
 
   tags {
