@@ -3,11 +3,10 @@ resource "aws_instance" "instance_snap" {
   ami                         = "${var.ami_id}"
   instance_type               = "${element(split(",",var.instance_type),count.index)}"
   subnet_id                   = "${element(split(",",var.instance_subnets),count.index)}"
-  ebs_optimized               = "${var.ebs_optimised}"
+  ebs_optimized               = "${element(split(",",var.ebs_optimised),count.index)}"
   key_name                    = "${var.key_name}"
   iam_instance_profile        = "${var.iam_instance_profile}"
   disable_api_termination     = "${var.termination_protection}"
-  ebs_optimized               = "${var.ebs_optimised}"
   associate_public_ip_address = "${var.associate_public_ip_address}"
   user_data                   = "${element(template_file.user_data.*.rendered,count.index)}"
   vpc_security_group_ids      = ["${split(",", var.security_groups)}"]

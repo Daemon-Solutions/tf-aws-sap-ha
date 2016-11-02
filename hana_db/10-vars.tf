@@ -34,7 +34,7 @@ variable "ebs_snapshots"    { default = "" }
 
 # == Generic EBS Options
 variable "encrypt_ebs_volumes" { default = false }
-variable "ebs_optimised"       { default = true  }
+variable "ebs_optimised"       { default = "true,true" }
 
 # == EC2 instance
 variable "key_name"                    {}
